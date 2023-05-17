@@ -193,7 +193,7 @@ func Decode(bs *[]byte) (Decoded, error) {
 	}
 
 	// create response packet
-	decoded.Response = []byte{0x00, 0x05, 0xCA, 0xFE, 0x01, (*bs)[4], decoded.NoOfData}
+	decoded.Response = []byte{0x00, 0x00, 0x00, decoded.NoOfData}
 
 	return decoded, nil
 }
