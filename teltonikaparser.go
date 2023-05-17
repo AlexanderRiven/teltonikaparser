@@ -50,36 +50,8 @@ func Decode(bs *[]byte) (Decoded, error) {
 	var err error
 	var nextByte int
 
-	// check for minimum packet size
-	if len(*bs) < 45 {
-		return Decoded{}, fmt.Errorf("Minimum packet size is 45 Bytes, got %v", len(*bs))
-	}
-
-	// check for teltonika packet ID
-	if (*bs)[2] != 0xca || (*bs)[3] != 0xfe {
-		return Decoded{}, fmt.Errorf("Probably not Teltonika packet, trashed")
-	}
-
-	// determine bit number where start data, it can change because of IMEI length
-	imeiLenX, err := b2n.ParseBs2Uint8(bs, 7)
-	if err != nil {
-		return Decoded{}, fmt.Errorf("Decode error, %v", err)
-	}
-	imeiLen := int(imeiLenX)
-
-	if imeiLen != 15 && imeiLen != 16 {
-		//log.Fatalf("Error when determining IMEI len want 15 or 16, got %v", imeiLen)
-		return Decoded{}, fmt.Errorf("Error when determining IMEI len want 15 or 16, got %v", imeiLen)
-	}
-
-	// decode and validate IMEI
-	decoded.IMEI, err = b2n.ParseIMEI(bs, 8, imeiLen)
-	if err != nil {
-		return Decoded{}, fmt.Errorf("Decode error, %v", err)
-	}
-
 	// count start bit for data
-	startByte := 8 + imeiLen
+	startByte := 8 
 
 	// decode Codec ID
 	decoded.CodecID = (*bs)[startByte]
